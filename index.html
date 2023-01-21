@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Page Title</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+
+        /* CSS for the letterboxes */
+        :root {
+            --letterbox-width: 40px;
+            --letterbox-height: 40px;
+            --letterbox-letter-showing-border: 2px solid #227A9E;
+            --letterbox-letter-hidden-border: 2px solid lightgray;
+            --letterbox-space-border: 2px solid transparent;
+            --letterbox-letter-showing-background-color: #227A9E;
+            --letterbox-letter-hidden-background-color: transparent;
+            --letterbox-text-hidden-color: transparent;
+            --letterbox-text-showing-color: white;
+            --letterbox-margin: 3px;
+            --letterbox-fontsize: 22px;
+        }
+
+        #letterbox-container {
+            width: 1360px;
+            border: 7px solid #D3D3D3;
+            overflow: hidden;
+            padding-left: 40px;
+            padding-right: 40px;
+            padding-top: 0px;
+            padding-bottom: 20px;
+            border-radius: 30px;
+            /* Center align this container horizontally */
+            margin: auto auto;
+        }
+
+        .verse-name {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 48px;
+            font-weight: 1000;
+            color: #777777;
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        .letter {
+            display: inline-block;
+            width: var(--letterbox-width);
+            height: var(--letterbox-height);
+            text-align: center;
+            line-height: var(--letterbox-height);
+            border: var(--letterbox-letter-showing-border);
+            font-family: 'Quicksand', sans-serif;
+            font-size: var(--letterbox-fontsize);
+            background-color: #227A9E;
+            color: var(--letterbox-text-showing-color);
+            margin: var(--letterbox-margin);
+        }
+
+        .hidden-letter {
+            display: inline-block;
+            width: var(--letterbox-width);
+            height: var(--letterbox-height);
+            text-align: center;
+            line-height: var(--letterbox-height);
+            border: var(--letterbox-letter-hidden-border);
+            font-family: 'Quicksand', sans-serif;
+            font-size: var(--letterbox-fontsize);
+            background-color: transparent;
+            color: var(--letterbox-text-hidden-color);
+            margin: var(--letterbox-margin);
+        }
+
+        .space {
+            display: inline-block;
+            width: var(--letterbox-width);
+            height: var(--letterbox-height);
+            line-height: var(--letterbox-height);
+            border: var(--letterbox-space-border);
+            margin: var(--letterbox-margin);
+            vertical-align: bottom;
+        }
+
+
+        .letter-box {
+            display: inline-block;
+            width: var(--letterbox-width);
+            height: var(--letterbox-height);
+            text-align: center;
+            line-height: var(--letterbox-height);
+            border: var(--letterbox-letter-hidden-border);
+            font-family: 'Quicksand', sans-serif;
+            font-size: var(--letterbox-fontsize);
+            background-color: transparent;
+            color: var(--letterbox-text-hidden-color);
+            margin: var(--letterbox-margin);
+            transform-style: preserve-3d;
+            transition: transform 1s, background-color 2s;
+            perspective: 1000px;
+        }
+
+        .input-box {
+            display: inline-block;
+            width: var(--letterbox-width);
+            height: var(--letterbox-height);
+            text-align: center;
+            line-height: var(--letterbox-height);
+            border: var(--letterbox-letter-hidden-border);
+            font-family: 'Quicksand', sans-serif;
+            font-size: var(--letterbox-fontsize);
+            padding: 0px;
+            background-color: transparent;
+            color: black;
+            margin: var(--letterbox-margin);
+            text-transform: uppercase;
+        }
+
+        .input-box:focus {
+            outline: none;
+        }
+
+        .letter-box.flip {
+            display: inline-block;
+            width: var(--letterbox-width);
+            height: var(--letterbox-height);
+            text-align: center;
+            line-height: var(--letterbox-height);
+            border: var(--letterbox-letter-showing-border);
+            font-family: 'Quicksand', sans-serif;
+            font-size: var(--letterbox-fontsize);
+            background-color: #227A9E;
+            color: var(--letterbox-text-showing-color);
+            margin: var(--letterbox-margin);
+            animation: flip-animation 0.5s linear;
+            animation-fill-mode: forwards;
+        }
+
+        .square-enable-flipback:not(.flip) {
+            animation: flip-animation-back 0.5s linear;
+            animation-fill-mode: forwards;
+        }
+
+        /* This animation hides the letter*/
+        @keyframes flip-animation-back {
+            0% {
+                transform: rotateX(0deg);
+                color: white;
+                background-color: var(--letterbox-letter-showing-background-color);
+                border: var(--letterbox-letter-showing-border);
+            }
+
+            50% {
+                transform: rotateX(90deg);
+                background-color: var(--letterbox-letter-showing-background-color);
+                border: var(--letterbox-letter-showing-border);
+                color: transparent;
+            }
+
+            100% {
+                transform: rotateX(180deg);
+                color: transparent;
+                background-color: var(--letterbox-letter-hidden-background-color);
+                border: var(--letterbox-letter-hidden-border)
+            }
+        }
+
+        /* This animation shows the letter*/
+        @keyframes flip-animation {
+            0% {
+                transform: rotateX(180deg);
+                color: transparent;
+                background-color: var(--letterbox-letter-hidden-background-color);
+                border: var(--letterbox-letter-hidden-border)
+            }
+
+            50% {
+                transform: rotateX(90deg);
+                background-color: var(--letterbox-letter-hidden-background-color);
+                border: var(--letterbox-letter-hidden-border);
+                color: transparent;
+            }
+
+            100% {
+                transform: rotateX(0deg);
+                color: white;
+                background-color: var(--letterbox-letter-showing-background-color);
+                border: var(--letterbox-letter-showing-border)
+            }
+        }
+
+        /* CSS FOR THE UI */
+        #ui-container {
+            width: 100%;
+            /* Inline block */
+            padding-top: 50px;
+            display: flex;
+            justify-content: center;
+        }
+
+
+        /* CSS FOR THE HELP HINT BOX */
+
+        #hintbox {
+            width: 279px;
+            /* Inline block */
+            /* padding-top: 40px; */
+            /* display: flex;
+            justify-content: center; */
+            position: relative;
+            /* Do the transform left */
+            transform: translateX(-40%);
+        }
+
+        .help-hint-dialogue-box {
+            height: 150px;
+            margin: 0 auto;
+            padding: 20px;
+            /* Add 40px to whatever the current margin is */
+            margin-right: 20px;
+            background-color: #227A9E;
+            /* width: 30%; */
+            /* Light blue */
+            border-radius: 40px;
+            color: white;
+        }
+
+        .help-hint-dialogue-box-2 {
+            height: 110px;
+            font-size: 20px;
+            padding: 10px 30px;
+        }
+
+
+
+        .dialogue-box-triangle {
+            width: 40px;
+            height: 30px;
+            display: flex;
+            /* position: absolute; */
+            left: 50%;
+            /* Horizontally align this */
+            margin: auto;
+            transform: rotate(180deg);
+            /* Push it to the left a bit */
+            background: linear-gradient(to bottom right, #fff 0%, #fff 50%, #227A9E 50%, #227A9E 100%);
+
+        }
+
+        .text {
+            text-align: center;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+
+        /* CSS FOR THE KEYBOARD */
+
+        #keyboard-container {
+            padding-left: 40px;
+            padding-right: 40px;
+        }
+
+        #keyboard {
+            width: 100%;
+        }
+
+        .row {
+            display: flex;
+            width: 100%;
+            height: 33.3333333%;
+            justify-content: center;
+        }
+
+        .row.row-2 {
+            transform: translatex(-2.5%);
+        }
+
+        .key {
+            /* Add a  drop shadow*/
+            box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+            display: flex;
+            height: 54px;
+            width: 40px;
+            margin: 2px;
+            padding: 10px;
+            /* Just take a note that the following conversion to percentages does not work properly */
+            /* height: 94%;
+            width: 6.75%;
+            margin: 0.5%;
+            padding: 1%; */
+            background-color: #ddd;
+            border-radius: 20px;
+            border: none;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 19.72px;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .submit-key {
+            opacity: 0;
+            width: 85px;
+            background: #227A9E;
+            border-radius: 33px;
+        }
+
+        .try-again-button {
+            opacity: 1;
+            width: 130px;
+            background: #227A9E;
+            border-radius: 33px;
+        }
+
+        .backspace-key {
+            opacity: 0;
+            width: 59px;
+            background-color: #7D7D7D;
+        }
+
+        /* Add an animation to make the button increase in size for 2 seconds when the key is pressed */
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.1);
+            }
+        }
+
+        .key-pressed {
+            animation: pulse 0.05s ease-out;
+            background-color: #7D7D7D;
+        }
+
+        .key:active {
+            background-color: #ccc;
+        }
+
+        /* CSS for the timer */
+        .timer-container {
+            display: flex;
+            /* display: none; */
+            opacity: 0;
+            align-items: center;
+            justify-content: center;
+            /* Make child elements 10% smaller but keep the box top aligned to the ui-container*/
+            transform: scale(0.7);
+            transform-origin: top;
+        }
+
+        .timer-circle {
+            border: 10px solid orange;
+            border-radius: 50%;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-number {
+            font-size: 100px;
+            font-weight: bold;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .timer-label {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        .congratulation-message-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Make child elements 10% smaller but keep the box top aligned to the ui-container*/
+            /* Left and right margin 50 px, no margin on the top */
+            /* Set the font */
+            font-family: 'Quicksand', sans-serif;
+            font-size: 28px;
+            margin: 0 300px;
+            /* transform: scale(0.7); */
+            /* transform-origin: top; */
+        }
+
+        .try-again-button-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Make child elements 10% smaller but keep the box top aligned to the ui-container*/
+            /* transform: scale(0.7); */
+            /* transform-origin: top; */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="letterbox-container">
+        <!-- Add an h1 that says JOHN 3:16 -->
+        <h1 id="verse-name" class="verse-name"></h1>
+    </div>
+    <div id="ui-container">
+        <div id="hintbox">
+            <div class="help-hint-dialogue-box">
+                <p id="hintbox-text" class="text"></p>
+            </div>
+            <div class="dialogue-box-triangle"></div>
+        </div>
+        <div id="keyboard-container">
+            <div id="keyboard">
+                <!-- The keys will be created here using Javascript -->
+            </div>
+        </div>
+        <div class="timer-container">
+            <div class="timer-circle">
+                <div class="timer-number"></div>
+                <div class="timer-label">seconds</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script>
+    let letterBoxesContainer = document.getElementById("letterbox-container");
+    let padding = parseFloat(window.getComputedStyle(letterBoxesContainer).paddingLeft) + parseFloat(window.getComputedStyle(letterBoxesContainer).paddingRight);
+    let letterboxesContainerWidth = letterBoxesContainer.clientWidth - padding;
+    let words;
+    let timerLimit = 2; // 5 seconds
+
+    let verseNameElement = document.getElementById("verse-name");
+
+    function findSquareSpaceCodeBlockAndResetWidth() {
+        document.getElementsByClassName("code-block")[0].style.width = "100%";
+    }
+
+    try {
+        findSquareSpaceCodeBlockAndResetWidth();
+    } catch (error) {
+        console.log("Could not find the code block");
+    }
+
+    function getVerse() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://labs.bible.org/api/?passage=votd', false);
+        xhr.send();
+        if (xhr.status === 200) {
+            // Get the json response of the request
+            return xhr.response;
+        }
+        return null;
+    }
+
+    function formatText(verseText) {
+        console.log(verseText);
+        let firstBTagText = verseText.substring(verseText.indexOf("<b>") + 3, verseText.indexOf("</b>"));
+        let lastBTagText = verseText.substring(verseText.lastIndexOf("<b>") + 3, verseText.lastIndexOf("</b>"));
+        if (firstBTagText === lastBTagText) {
+            lastBTagText = "";
+        }
+        // Remove everything between the  <b> string and the </b>
+        verseText = verseText.replace(/<b>.*?<\/b>/g, "");
+        // Get only the numerical characters from the lat b tag text and save it to lastBTagText
+        // Get only the LAST one or two numbers in the last b tag text and save it to lastBTagText
+        lastBTagText = lastBTagText.match(/\d+/g).pop();
+        // lastBTagText = lastBTagText.replace(/[^0-9]/g, "");
+        if (lastBTagText === "") {
+            verseNameElement.innerText = firstBTagText;
+        } else {
+            verseNameElement.innerText = firstBTagText + "-" + lastBTagText;
+        }
+        // Strip any leading or trailing whitespace
+        verseText = verseText.trim();
+        verseText = verseText.toUpperCase();
+        words = verseText.split(" ");
+        return words
+    }
+
+    function createLetterboxesOrInputBoxes(asInputBox = false) {
+        // If the as input box is true, then the letterboxes will be created as input boxes
+        // If it is false, then the letterboxes will be created as divs
+        // For input boxes, add the "input-box" class for the letters
+        // For divs, add the "letter-box" class for the letters
+
+        let currentWidth = 0;
+
+        // Code to get the true width of the letterbox element.
+        let dummy = document.createElement("div");
+        dummy.classList.add("letter");
+        document.body.appendChild(dummy);
+        let computedStyles = window.getComputedStyle(dummy);
+        let letterWidth = parseFloat(computedStyles.width) +
+            parseFloat(computedStyles.paddingLeft) +
+            parseFloat(computedStyles.paddingRight) +
+            parseFloat(computedStyles.borderLeftWidth) +
+            parseFloat(computedStyles.borderRightWidth) +
+            parseFloat(computedStyles.marginLeft) +
+            parseFloat(computedStyles.marginRight);
+        document.body.removeChild(dummy);
+
+        for (let i = 0; i < words.length; i++) {
+            let word = words[i];
+            let wordWidth = word.length * letterWidth;
+            let letters = word.split("");
+
+            // Can we add the current word without exceeding the container width?
+            // If no, add the <br> element
+            if (wordWidth + currentWidth >= letterboxesContainerWidth) {
+                letterBoxesContainer.appendChild(document.createElement("br"));
+                currentWidth = 0;
+            }
+
+            // Add the word and update the currentWidth
+            for (let j = 0; j < letters.length; j++) {
+                let char = letters[j];
+                if (asInputBox) {
+                    // Add the class "input-box" to the element
+                    let elem;
+                    if (char.match(/[A-Z]/)) {
+                        elem = document.createElement("input");
+                        elem.classList.add("input-box");
+                        // Set the max length of the input box to 1
+                        elem.maxLength = 1;
+                        // elem.innerText = "*";
+                        // elem.style.color = "white";
+                    } else {
+                        elem = document.createElement("div");
+                        elem.classList.add("letter");
+                        elem.innerText = char;
+                    }
+                    // elem.classList.add(`letter-${char}`);
+                    // Put in a placeholder for the input-box element
+                    letterBoxesContainer.appendChild(elem);
+
+                } else {
+                    let elem = document.createElement("div");
+                    // Add the class "hidden-letter" if the character is a letter
+                    // Add the class "letter" if the character is a number or symbol
+                    if (char.match(/[A-Z]/)) {
+                        elem.classList.add("letter-box");
+                        elem.classList.add("hidden-letter");
+                    } else {
+                        elem.classList.add("letter");
+                    }
+                    elem.classList.add(`letter-${char}`);
+                    elem.innerText = char;
+                    letterBoxesContainer.appendChild(elem);
+                }
+            }
+
+            currentWidth += wordWidth;
+
+            // Should we add a space?
+            let combinedWidth = currentWidth + letterWidth;
+            if (currentWidth + letterWidth >= letterboxesContainerWidth) {
+                // Space won't fit: Add a br element instead and reset currentWidth
+                letterBoxesContainer.appendChild(document.createElement("br"));
+                currentWidth = 0;
+            } else {
+                // Space will fit on current line, go ahead and add
+                // if we're not on the last word.
+                if (i !== words.length - 1) {
+                    let space = document.createElement("div");
+                    space.classList.add("space");
+                    space.innerText = " ";
+                    letterBoxesContainer.appendChild(space);
+                    currentWidth += letterWidth;
+                }
+            }
+        }
+    }
+
+    function displayView1Hintbox() {
+        let hintboxText = document.getElementById("hintbox-text");
+        hintboxText.innerText = "TIP: Type the letters to reveal the verse. When you’ve typed all letters present in the verse, you will have 30 seconds to memorize the verse.";
+    }
+
+    function displayView2Hintbox() {
+        let hintbox = document.getElementById("hintbox-text");
+        hintbox.innerText = "Enter the verse from memory!";
+        let hintBoxContainer = document.getElementsByClassName("help-hint-dialogue-box")[0];
+        hintBoxContainer.classList.add("help-hint-dialogue-box-2");
+        let triangleElement = document.getElementsByClassName("dialogue-box-triangle")[0];
+        triangleElement.classList.add("dialogue-box-triangle-2");
+    }
+
+    function createKeyboard() {
+        let keyboard = document.getElementById("keyboard");
+        let keys = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "Submit", "z", "x", "c", "v", "b", "n", "m", "\u232B"];
+        let rows = [];
+
+        // Create the rows
+        for (let i = 0; i < 3; i++) {
+            rows[i] = document.createElement("div");
+            rows[i].classList.add("row");
+            rows[i].classList.add(`row-${i}`);
+            keyboard.appendChild(rows[i]);
+        }
+
+        // Create the keys
+        for (let i = 0; i < keys.length; i++) {
+            let key = document.createElement("button");
+            key.innerText = keys[i];
+            key.classList.add("key");
+            if (keys[i] === "Submit") {
+                key.classList.add("submit-key");
+                // Set disabled to true so that the button cannot be clicked
+                key.disabled = true;
+            }
+            if (keys[i] == "\u232B") {
+                key.classList.add("backspace-key");
+                key.disabled = true
+            }
+            // Set the id of the key to the key value
+            key.id = keys[i];
+
+            let rowSelector = 0;
+            if (i >= 19) {
+                rowSelector = 2;
+            } else if (i >= 10) {
+                rowSelector = 1;
+            } else {
+                rowSelector = 0;
+            }
+            rows[rowSelector].appendChild(key);
+        }
+
+    }
+
+    function revealSubmitButtonAndBackspaceButton() {
+        let submitButton = document.getElementsByClassName("submit-key")[0];
+        submitButton.disabled = false;
+        submitButton.style.opacity = 1;
+        let backspaceButton = document.getElementsByClassName("backspace-key")[0];
+        backspaceButton.classList.add("backspace-key-enabled");
+        backspaceButton.disabled = false;
+        backspaceButton.style.opacity = 1;
+    }
+
+    function keyboardClickEventListener(e) {
+        if (e.target.classList.contains("key")) {
+            let key = e.target.innerText;
+            console.log("Key pressed: " + key);
+            e.target.classList.add("key-pressed");
+            // Find ALL of the elements with the class "letter-<key>"
+            // and remove the class "hidden-letter"
+            // and add the class "revealed-letter"
+            let elements = document.getElementsByClassName(`letter-${key.toUpperCase()}`);
+            for (let i = 0; i < elements.length; i++) {
+                if (elements[i].classList.contains("hidden-letter")) {
+                    elements[i].classList.toggle("flip");
+                    elements[i].classList.remove("hidden-letter");
+                    elements[i].classList.add("letter");
+                }
+            }
+        }
+        if (checkThatAllLettersAreRevealed()) {
+            // Reveal submitKey and enable it and remove the event listeners
+            console.log("All letters revealed!");
+            removeKeyboardEventListeners();
+            displayAndStartTimer();
+        }
+    }
+
+    function keyboardKeydownEventListener(e) {
+        let key = e.key;
+        console.log("Key pressed: " + key);
+        let keyElement = document.getElementById(key);
+        if (keyElement) {
+            keyElement.classList.add("key-pressed");
+        }
+
+        let elements = document.getElementsByClassName(`letter-${key.toUpperCase()}`);
+        for (let i = 0; i < elements.length; i++) {
+            // Only do the following if the "hidden-letter" class is present
+            if (elements[i].classList.contains("hidden-letter")) {
+                elements[i].classList.toggle("flip");
+                elements[i].classList.remove("hidden-letter");
+                elements[i].classList.add("letter");
+            }
+        }
+
+        if (checkThatAllLettersAreRevealed()) {
+            console.log("All letters revealed!");
+            // Reveal submitKey and enable it and remove the event listeners
+            removeKeyboardEventListeners();
+            displayAndStartTimer();
+        }
+    }
+
+    function addKeyboardEventListeners() {
+        let keyboard = document.getElementById("keyboard");
+
+        keyboard.addEventListener("click", keyboardClickEventListener);
+        document.addEventListener("keydown", keyboardKeydownEventListener);
+
+        return keyboard;
+    };
+
+    function turnOffDisplayOfTimer() {
+        let timer = document.getElementsByClassName("timer-container")[0];
+        timer.style.opacity = "0";
+    }
+
+    function turnOffDisplayOfKeyboard() {
+        let keyboard = document.getElementById("keyboard-container");
+        keyboard.style.display = "none";
+    }
+
+    function turnOffDisplayOfHintBox() {
+        let hintbox = document.getElementById("hintbox");
+        hintbox.style.display = "none";
+    }
+
+    function removeKeyboardEventListeners() {
+        let keyboard = document.getElementById("keyboard");
+
+        keyboard.removeEventListener("click", keyboardClickEventListener);
+        document.removeEventListener("keydown", keyboardKeydownEventListener);
+        displayAndStartTimer();
+
+        return keyboard;
+    };
+
+    function checkThatAllLettersAreRevealed() {
+        let hiddenLetters = document.getElementsByClassName("hidden-letter");
+        // If all 
+        console.log("Hidden letters: " + hiddenLetters.length);
+        if (hiddenLetters.length === 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    let timerIsRunning = false;
+
+    function displayAndStartTimer() {
+        let timerContainer = document.getElementsByClassName("timer-container")[0];
+        let timerNumber = document.getElementsByClassName("timer-number")[0];
+        timerNumber.innerText = timerLimit;
+        timerContainer.style.opacity = 1;
+        console.log("Timer displayed");
+        // Start the countdown of the timer
+        // Check that the timer is not already running
+        if (!timerIsRunning) {
+            timerIsRunning = true;
+            startTimer();
+        }
+    }
+
+    function startTimer() {
+        console.log("We're creating a timer!");
+        let timer = document.getElementsByClassName("timer-number")[0];
+        let time = timerLimit;
+        let interval = setInterval(function () {
+            time--;
+            timer.innerText = time;
+            if (time === 0) {
+                clearInterval(interval);
+                console.log("Timer stopped");
+                changeLetterBoxesToInputBoxes();
+                displayView2Hintbox();
+                turnOffDisplayOfTimer();
+            }
+        }, 1000);
+    }
+
+    function removeLetterBoxes() {
+        let letterBoxes = document.getElementsByClassName("letter-box");
+        while (letterBoxes.length > 0) {
+            letterBoxes[0].parentNode.removeChild(letterBoxes[0]);
+        }
+        let spaceBoxes = document.getElementsByClassName("space");
+        while (spaceBoxes.length > 0) {
+            spaceBoxes[0].parentNode.removeChild(spaceBoxes[0]);
+        }
+        let revealedLetters = document.getElementsByClassName("letter");
+        while (revealedLetters.length > 0) {
+            revealedLetters[0].parentNode.removeChild(revealedLetters[0]);
+        }
+
+        // Remove all of the br tags in the letterbox-container div
+        let letterBoxesContainer = document.getElementById("letterbox-container");
+        let containerInnerHTML = letterBoxesContainer.innerHTML;
+        containerInnerHTML = containerInnerHTML.replace(/<br>/g, "");
+        letterBoxesContainer.innerHTML = containerInnerHTML;
+    }
+
+    let userInputs = [];
+    function focusOnFirstInputBox() {
+        let inputBoxes = document.getElementsByClassName("input-box");
+        inputBoxes[0].focus();
+    }
+
+    function inputBoxEventListener(e) {
+        let inputBox = e.target;
+        let inputValue = inputBox.value;
+        let inputBoxIndex = Array.from(inputBoxes).indexOf(inputBox);
+
+        if (inputValue.length === 1) {
+            // Move the focus to the next input box
+            let nextInputBox = inputBoxes[inputBoxIndex + 1];
+            if (nextInputBox) {
+                nextInputBox.focus();
+                currentInputBoxInFocus = nextInputBox;
+            }
+        }
+    }
+
+    let inputBoxes;
+    let currentInputBoxInFocus;
+    function handleUserInputs() {
+        // Add an event listener to handle when a user inputs a character into the input box
+        // When the user inputs a character, move the focus to the next input box
+        // If the user presses the backspace character, move the focus to the previous input box
+        // For now, don't worry about submitting the form.
+        inputBoxes = document.getElementsByClassName("input-box");
+        for (let i = 0; i < inputBoxes.length; i++) {
+            // Add the keyup event listener to each input box
+            inputBoxes[i].addEventListener("keydown", function (e) {
+                if (e.key === "Backspace" && inputBoxes[i].value.length === 0) {
+                    let previousInputBox = inputBoxes[i - 1];
+                    if (previousInputBox) {
+                        previousInputBox.value = "";
+                        previousInputBox.focus();
+                        currentInputBoxInFocus = previousInputBox;
+                    }
+                } else if (e.key === "Backspace" && inputBoxes[i].value.length > 0) {
+                    inputBoxes[i].value = "";
+                    inputBoxes[i].focus();
+                    currentInputBoxInFocus = inputBoxes[i];
+                } else {
+                    inputBoxEventListener(e);
+                }
+            });
+        }
+
+        // Add a keyboard listener for each of the onscreen keyboard buttons
+        let keys = document.getElementsByClassName("key");
+        for (let i = 0; i < keys.length; i++) {
+            // Get the current element in focus
+            keys[i].addEventListener("click", keyboardClickEventListenerView2);
+        }
+    }
+
+    function keyboardClickEventListenerView2(e) {
+        let keyboardButton = e.target;
+        let keyboardButtonValue = keyboardButton.innerText;
+        // Get the input button that has the focus
+
+        let inputBox = currentInputBoxInFocus;
+        inputBox.focus();
+        let inputBoxIndex = Array.from(inputBoxes).indexOf(inputBox);
+
+        if (keyboardButtonValue === "\u232B") {
+            if (inputBox.value.length > 0) {
+                inputBox.value = "";
+                currentInputBoxInFocus = inputBox;
+            } else {
+                let previousInputBox = inputBoxes[inputBoxIndex - 1];
+                if (previousInputBox) {
+                    previousInputBox.value = "";
+                    previousInputBox.focus();
+                    currentInputBoxInFocus = previousInputBox;
+                }
+            }
+        } else {
+            if (inputBox.value.length === 1) {
+                // Move the focus to the next input box
+                let nextInputBox = inputBoxes[inputBoxIndex + 1];
+                if (nextInputBox) {
+                    nextInputBox.focus();
+                    nextInputBox.value = keyboardButtonValue.toUpperCase();
+                    currentInputBoxInFocus = nextInputBox;
+                }
+            } else {
+                inputBox.value = keyboardButtonValue;
+                console.log("Input box value: " + inputBox.value);
+                let nextInputBox = inputBoxes[inputBoxIndex + 1];
+                if (nextInputBox) {
+                    nextInputBox.focus();
+                    currentInputBoxInFocus = nextInputBox;
+                }
+            }
+        }
+    }
+
+    // View 2
+    function changeLetterBoxesToInputBoxes() {
+        removeLetterBoxes();
+        createLetterboxesOrInputBoxes(asInputBox = true);
+        focusOnFirstInputBox();
+        handleUserInputs();
+        revealSubmitButtonAndBackspaceButton();
+        // Add the "Try Again" button which should take us View 3
+        addSubmitButtonClickHandler();
+        addSubmitButtonKeydownHandler();
+    }
+
+    // View #3
+    let answer;
+    function addSubmitButtonClickHandler() {
+        answer = words.join(" ");
+        let submitButton = document.getElementsByClassName("submit-key")[0];
+        submitButton.addEventListener("click", handleTryAgainClick);
+    }
+
+    // Add a keyboard keydown event listener so that if the user presses the "Enter" key, the submit button is clicked
+
+    function addSubmitButtonKeydownHandler() {
+        answer = words.join(" ");
+        let submitButton = document.getElementsByClassName("submit-key")[0];
+        document.addEventListener("keydown", function (e) {
+            console.log("Keydown event listener added");
+            console.log(e.key);
+            if (e.key === "Enter") {
+                handleTryAgainClick();
+            }
+        });
+    }
+
+    function handleTryAgainClick() {
+        turnOffDisplayOfHintBox();
+        turnOffDisplayOfKeyboard();
+
+        let userInputsString = getUserInputAsString();
+        removeAllLetterBoxes();
+
+        let colorScoreObject = calculateScore(userInputsString, answer);
+        let score = colorScoreObject[0];
+        let color = colorScoreObject[1];
+        let numberOfCorrectLetters = colorScoreObject[2];
+        let totalNumberOfLetters = colorScoreObject[3];
+        console.log(colorScoreObject)
+
+        let scoreMessage = document.createElement("h1");
+        // Wrap the ${score}%! part of the innerText in a tag so we can change the color of that text
+        if (color === "green") {
+            scoreMessage.innerHTML = `Congratulations!<br><br> You got ${numberOfCorrectLetters} out of ${totalNumberOfLetters} letters correct for a score of <span style="color: ${color};">${score}%!</span>`;
+        } else if (color === "yellow") {
+            scoreMessage.innerHTML = `Good try<br><br>You got ${numberOfCorrectLetters} out of ${totalNumberOfLetters} letters correct for a score of <span style="color: ${color};">${score}%!</span>`;
+        }
+        else {
+            scoreMessage.innerHTML = `You got ${numberOfCorrectLetters} out of ${totalNumberOfLetters} letters correct for a score of <span style="color: ${color};">${score}%</span>`;
+        }
+        let tryAgainButton = document.createElement("button");
+
+        // Add a class to the tryAgainButton element
+        tryAgainButton.classList.add("key");
+        tryAgainButton.classList.add("try-again-button");
+        tryAgainButton.style.opacity = "1";
+        tryAgainButton.innerText = "Try again";
+        tryAgainButton.addEventListener("click", function () {
+            location.reload();
+        });
+        // Create a container element to hold the score message
+        // Create another container element to hold the try again button
+        let congratulationMessageContainer = document.createElement("div");
+        congratulationMessageContainer.classList.add("congratulation-message-container");
+        letterBoxesContainer.appendChild(congratulationMessageContainer);
+        congratulationMessageContainer.appendChild(scoreMessage);
+
+        let tryAgainButtonContainer = document.createElement("div");
+        tryAgainButtonContainer.classList.add("try-again-button-container");
+        tryAgainButtonContainer.appendChild(tryAgainButton);
+        letterBoxesContainer.appendChild(tryAgainButtonContainer);
+
+        // Turn off display of verse-name header
+        let verseNameHeader = document.getElementsByClassName("verse-name")[0];
+        verseNameHeader.style.display = "none";
+    }
+
+    function getUserInputAsString() {
+        let userInputs = [];
+        let childElements = letterBoxesContainer.children;
+        for (let i = 0; i < childElements.length; i++) {
+            let childElement = childElements[i];
+            if (childElement.classList.contains("input-box")) {
+                // If the character is not the SUBMIT value, add it to the userInputs array
+                if (childElement.value !== "SUBMIT" && childElement.value !== "\u232B" && childElement.value !== "Submit") {
+                    userInputs.push(childElement.value);
+                }
+            } else if (childElement.classList.contains("space")) {
+                userInputs.push(" ");
+            } else if (childElement.classList.contains("letter")) {
+                userInputs.push(childElement.innerText);
+            } // If there's a br element add a space to the userInputs array
+            else if (childElement.tagName === "BR") {
+                if (userInputs[userInputs.length - 1] !== " ") {
+                    userInputs.push(" ");
+                }
+            }
+        }
+
+        console.log("This is the array of userInputs: ", userInputs);
+        let userInputsString = userInputs.join("").toUpperCase();
+        console.log("This is the userInputsString: ", userInputsString);
+        return userInputsString;
+
+    }
+
+    function removeAllLetterBoxes() {
+        // Remove all of the input-box class elements
+        let inputBoxes = document.getElementsByClassName("input-box");
+        for (let i = inputBoxes.length - 1; i >= 0; i--) {
+            // userInputs.push(inputBoxes[i].value);
+            // Then remove the input box
+            inputBoxes[i].parentNode.removeChild(inputBoxes[i]);
+        }
+
+        // Remove all of the space class elements
+        let spaceBoxes = document.getElementsByClassName("space");
+        while (spaceBoxes.length > 0) {
+            spaceBoxes[0].parentNode.removeChild(spaceBoxes[0]);
+        }
+
+        // Remove all of the letter class elements
+        let letters = document.getElementsByClassName("letter");
+        while (letters.length > 0) {
+            letters[0].parentNode.removeChild(letters[0]);
+        }
+
+        // Remove all of the br tags in the letterbox-container div
+        let containerInnerHTML = letterBoxesContainer.innerHTML;
+        containerInnerHTML = containerInnerHTML.replace(/<br>/g, "");
+        letterBoxesContainer.innerHTML = containerInnerHTML;
+    }
+
+    function calculateScore(userInputString, answer) {
+        // Remove all characters that are strictly NOT letters from both the userInputString and the answer
+        userInputString = userInputString.replace(/[^a-zA-Z]/g, "");
+        answer = answer.replace(/[^a-zA-Z]/g, "");
+        let numberOfCorrectLetters = 0;
+        for (let i = 0; i < userInputString.length; i++) {
+            if (userInputString[i] === answer[i]) {
+                numberOfCorrectLetters++;
+            }
+        }
+        let score = Math.round((numberOfCorrectLetters / answer.length) * 100);
+        if (score <= 50) {
+            color = "red";
+        } else if (score <= 75) {
+            color = "orange";
+        } else {
+            color = "green";
+        }
+        return [score, color, numberOfCorrectLetters, answer.length];
+    }
+
+    // View 1: Get the verse of the day from the API and setup the letterboxes
+    words = formatText(getVerse());
+    createLetterboxesOrInputBoxes();
+    createKeyboard();
+    let keyboardEventListeners = addKeyboardEventListeners();
+    displayView1Hintbox();
+</script>
+
+</html>
