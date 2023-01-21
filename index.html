@@ -468,9 +468,10 @@
         }
         // Remove everything between the  <b> string and the </b>
         verseText = verseText.replace(/<b>.*?<\/b>/g, "");
-        // Get only the numerical characters from the lat b tag text and save it to lastBTagText
         // Get only the LAST one or two numbers in the last b tag text and save it to lastBTagText
-        lastBTagText = lastBTagText.match(/\d+/g).pop();
+        if (lastBTagText !== "") {
+            lastBTagText = lastBTagText.match(/\d+/g).pop();
+        }
         // lastBTagText = lastBTagText.replace(/[^0-9]/g, "");
         if (lastBTagText === "") {
             verseNameElement.innerText = firstBTagText;
