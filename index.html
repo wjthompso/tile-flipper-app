@@ -441,6 +441,9 @@
     let letterboxesContainerWidth = letterBoxesContainer.clientWidth - padding;
     let words;
     let timerLimit = 30; // 5 seconds
+    let userAttempts = 0;
+    let previousScores = [];
+    // Create an empty array
 
     let verseNameElement = document.getElementById("verse-name");
 
@@ -585,6 +588,22 @@
         }
     }
 
+    // This is for View 4
+    function displayAllLetters() {
+        console.log("We're in display all letters");
+        // Get all child elements of the letterboxes container
+        let letterBoxes = letterBoxesContainer.children;
+        for (let i = 0; i < letterBoxes.length; i++) {
+            let letterBox = letterBoxes[i];
+            if (letterBox.classList.contains("hidden-letter")) {
+                letterBox.classList.remove("hidden-letter");
+                letterBox.classList.add("letter");
+                letterBox.classList.remove("letter-box");
+
+            }
+        }
+    }
+
     function displayView1Hintbox() {
         let hintboxText = document.getElementById("hintbox-text");
         hintboxText.innerText = "TIP: Type the letters to reveal the verse. When you’ve typed all letters present in the verse, you will have 30 seconds to memorize the verse.";
@@ -712,14 +731,34 @@
         return keyboard;
     };
 
+    function disableSubmitButton() {
+        let submitButton = document.getElementsByClassName("submit-key")[0];
+        submitButton.disabled = true;
+    }
+
+    function enableSubmitButton() {
+        let submitButton = document.getElementsByClassName("submit-key")[0];
+        submitButton.disabled = false;
+    }
+
     function turnOffDisplayOfTimer() {
         let timer = document.getElementsByClassName("timer-container")[0];
         timer.style.opacity = "0";
     }
 
+    function turnOnDisplayOfKeyboard() {
+        let keyboard = document.getElementById("keyboard-container");
+        keyboard.style.display = "block";
+    }
+
     function turnOffDisplayOfKeyboard() {
         let keyboard = document.getElementById("keyboard-container");
         keyboard.style.display = "none";
+    }
+
+    function turnOnDisplayOfHintBox() {
+        let hintbox = document.getElementById("hintbox");
+        hintbox.style.display = "block";
     }
 
     function turnOffDisplayOfHintBox() {
@@ -749,7 +788,6 @@
     }
 
     let timerIsRunning = false;
-
     function displayAndStartTimer() {
         let timerContainer = document.getElementsByClassName("timer-container")[0];
         let timerNumber = document.getElementsByClassName("timer-number")[0];
@@ -758,6 +796,7 @@
         console.log("Timer displayed");
         // Start the countdown of the timer
         // Check that the timer is not already running
+        console.log("Timer is running: " + timerIsRunning);
         if (!timerIsRunning) {
             timerIsRunning = true;
             startTimer();
@@ -777,6 +816,11 @@
                 changeLetterBoxesToInputBoxes();
                 displayView2Hintbox();
                 turnOffDisplayOfTimer();
+                // Set the timerIsRunning variable to false
+                console.log("Timer is running: " + timerIsRunning);
+                timerIsRunning = false;
+                console.log("We just set the timerIsRunning variable to false");
+                console.log(timerIsRunning);
             }
         }, 1000);
     }
@@ -825,6 +869,9 @@
 
     let inputBoxes;
     let currentInputBoxInFocus;
+    // Get all of the letter boxes
+    let letterBoxes = document.getElementsByClassName("letter");
+    currentInputBoxInFocus = document.getElementsByClassName("input-box")[0];
     function handleUserInputs() {
         // Add an event listener to handle when a user inputs a character into the input box
         // When the user inputs a character, move the focus to the next input box
@@ -918,26 +965,60 @@
     function addSubmitButtonClickHandler() {
         answer = words.join(" ");
         let submitButton = document.getElementsByClassName("submit-key")[0];
-        submitButton.addEventListener("click", handleTryAgainClick);
+        submitButton.addEventListener("click", handleSubmitClick);
+    }
+
+    function removeSubmitButtonClickHandler() {
+        let submitButton = document.getElementsByClassName("submit-key")[0];
+        submitButton.removeEventListener("click", handleSubmitClick);
     }
 
     // Add a keyboard keydown event listener so that if the user presses the "Enter" key, the submit button is clicked
 
+    function submitButtonKeyDownHandler(e) {
+        console.log("Keydown event listener added");
+        console.log(e.key);
+        if (e.key === "Enter") {
+            handleSubmitClick();
+        }
+    }
+
     function addSubmitButtonKeydownHandler() {
         answer = words.join(" ");
         let submitButton = document.getElementsByClassName("submit-key")[0];
-        document.addEventListener("keydown", function (e) {
-            console.log("Keydown event listener added");
-            console.log(e.key);
-            if (e.key === "Enter") {
-                handleTryAgainClick();
-            }
-        });
+        document.addEventListener("keydown", submitButtonKeyDownHandler);
     }
 
-    function handleTryAgainClick() {
+    function removeSubmitButtonKeydownHandler() {
+        let submitButton = document.getElementsByClassName("submit-key")[0];
+        document.removeEventListener("keydown", submitButtonKeyDownHandler);
+    }
+
+    function removeInitialCongratulationsMessage() {
+        let congratulationsMessage = document.getElementById("congratulation-message-container-0");
+        if (congratulationsMessage) {
+            congratulationsMessage.remove();
+        }
+    }
+
+    function turnOffDisplayOfVerseName() {
+        let verseName = document.getElementById("verse-name");
+        verseName.style.display = "none";
+    }
+
+    function turnOnDisplayOfVerseName() {
+        let verseName = document.getElementById("verse-name");
+        verseName.style.display = "block";
+    }
+
+    // View 3 or View 5
+    function handleSubmitClick() {
         turnOffDisplayOfHintBox();
         turnOffDisplayOfKeyboard();
+        disableSubmitButton();
+        removeSubmitButtonClickHandler();
+        removeSubmitButtonKeydownHandler();
+        turnOffDisplayOfVerseName();
 
         let userInputsString = getUserInputAsString();
         removeAllLetterBoxes();
@@ -959,31 +1040,67 @@
         else {
             scoreMessage.innerHTML = `You got ${numberOfCorrectLetters} out of ${totalNumberOfLetters} letters correct for a score of <span style="color: ${color};">${score}%</span>`;
         }
-        let tryAgainButton = document.createElement("button");
 
-        // Add a class to the tryAgainButton element
-        tryAgainButton.classList.add("key");
-        tryAgainButton.classList.add("try-again-button");
-        tryAgainButton.style.opacity = "1";
-        tryAgainButton.innerText = "Try again";
-        tryAgainButton.addEventListener("click", function () {
-            location.reload();
-        });
-        // Create a container element to hold the score message
-        // Create another container element to hold the try again button
+        if (userAttempts === 1) {
+            prevScoreObject = previousScores[0];
+
+            if (prevScoreObject.color === "green") {
+                scoreMessage.innerHTML += `<br><br>Your previous score was an impressive ${prevScoreObject.numberOfCorrectLetters} out of ${prevScoreObject.totalNumberOfLetters} letters correct for a score of <span style="color: ${prevScoreObject.color};">${prevScoreObject.score}%!</span>`;
+            } else if (prevScoreObject.color === "yellow") {
+                scoreMessage.innerHTML += `<br><br>Your previous score was ${prevScoreObject.numberOfCorrectLetters} out of ${prevScoreObject.totalNumberOfLetters} letters correct for a score of <span style="color: ${prevScoreObject.color};">${prevScoreObject.score}%!</span>`;
+            }
+            else {
+                scoreMessage.innerHTML += `<br><br>Your previous score was ${prevScoreObject.numberOfCorrectLetters} out of ${prevScoreObject.totalNumberOfLetters} letters correct for a score of <span style="color: ${prevScoreObject.color};">${prevScoreObject.score}%</span>`;
+            }
+
+            scoreMessage.innerHTML += `<br><br>Try again tomorrow for a new verse of the day!`;
+        }
+
         let congratulationMessageContainer = document.createElement("div");
         congratulationMessageContainer.classList.add("congratulation-message-container");
+        congratulationMessageContainer.id = "congratulation-message-container-" + userAttempts;
         letterBoxesContainer.appendChild(congratulationMessageContainer);
         congratulationMessageContainer.appendChild(scoreMessage);
 
-        let tryAgainButtonContainer = document.createElement("div");
-        tryAgainButtonContainer.classList.add("try-again-button-container");
-        tryAgainButtonContainer.appendChild(tryAgainButton);
-        letterBoxesContainer.appendChild(tryAgainButtonContainer);
+        if (userAttempts === 0) {
+            userAttempts += 1;
+            previousScores.push({ score: score, color: color, numberOfCorrectLetters: numberOfCorrectLetters, totalNumberOfLetters: totalNumberOfLetters });
+            console.log("We got here, user attempts: " + userAttempts);
 
-        // Turn off display of verse-name header
-        let verseNameHeader = document.getElementsByClassName("verse-name")[0];
-        verseNameHeader.style.display = "none";
+            let tryAgainButton = document.createElement("button");
+
+            // Add a class to the tryAgainButton element
+            tryAgainButton.classList.add("key");
+            tryAgainButton.classList.add("try-again-button");
+            tryAgainButton.style.opacity = "1";
+            tryAgainButton.innerText = "Try again";
+            tryAgainButton.addEventListener("click", function () {
+                // Here, we're going to check if the user has already played the game once
+                // If they haven't, we're going to reset the game to the point where all letters are showing and the timer has started
+                // If they have, we're going to display both of their scores and they'll have to reload the page to try again.
+
+                removeInitialCongratulationsMessage();
+                turnOnDisplayOfVerseName();
+                createLetterboxesOrInputBoxes(asInputBox = false);
+                displayAllLetters();
+                turnOnDisplayOfHintBox();
+                turnOnDisplayOfKeyboard();
+                enableSubmitButton();
+                displayAndStartTimer();
+                addSubmitButtonClickHandler();
+                addSubmitButtonKeydownHandler();
+                // Remove the "Try Again" button from the DOM
+                let tryAgainButtonContainer = document.getElementsByClassName("try-again-button")[0];
+                tryAgainButtonContainer.remove();
+                // Reload to the point where all letterboxes are showing and the timer has started
+                // location.reload();
+            });
+
+            let tryAgainButtonContainer = document.createElement("div");
+            tryAgainButtonContainer.classList.add("try-again-button-container");
+            tryAgainButtonContainer.appendChild(tryAgainButton);
+            letterBoxesContainer.appendChild(tryAgainButtonContainer);
+        }
     }
 
     function getUserInputAsString() {
